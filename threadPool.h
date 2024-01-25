@@ -49,7 +49,7 @@ public:
     }
 
     template<typename F, typename... Args> 
-    void enqueue(F&& func, Args&&... args) {
+    auto enqueue(F&& func, Args&&... args) {
         std::function<decltype(func(args...))()> f = std::bind(std::forward<F>(func), std::forward<Args>(args)...);
         auto taskPtr = std::make_shared<std::packaged_task<decltype(func(args...))()>>(f);
         std::function<void()> task = [taskPtr]() {
@@ -60,6 +60,7 @@ public:
         lock.unlock();
 
         condition.notify_one();
+        return taskPtr->get_future();
     }
 private:
     std::vector<std::thread> threads;
