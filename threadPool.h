@@ -48,6 +48,11 @@ public:
         }
     }
 
+    threadPool (const threadPool&) = delete;
+    threadPool (threadPool&&) = delete;
+    threadPool& operator=(const threadPool&) = delete;
+    threadPool& operator=(threadPool&&) = delete;
+
     template<typename F, typename... Args> 
     auto enqueue(F&& func, Args&&... args) {
         std::function<decltype(func(args...))()> f = std::bind(std::forward<F>(func), std::forward<Args>(args)...);
